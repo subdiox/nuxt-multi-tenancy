@@ -39,24 +39,38 @@ export default defineNuxtModule<ModuleOptions>({
           const { hostname } = useRequestURL();
           const rootDomain = ${JSON.stringify(
             rootDomains
-          )}.find(domain => hostname.endsWith(domain))
+          )}.find(domain => hostname.endsWith(domain));
           if (!rootDomain) {
-            return routes
+            return routes;
           }
           if (hostname === rootDomain) {
-            return routes
+            return routes;
           }
-
-          const tenantRoutePrefix = \`/:${tenantDynamicRoute}()\`
-          return routes.map((route) => {
-            if (route.path.startsWith(tenantRoutePrefix)) {
-              return {
-                ...route,
-                path: route.path.replace(tenantRoutePrefix, ""),
-              };
-            }
-            return route;
-          });
+          const subDomain = hostname.replace(\`.\${rootDomain}\`, "");
+          const subDomainRoutePrefix = \`/\${subDomain}\`;
+          const tenantRoutePrefix = \`/:${tenantDynamicRoute}()\`;
+          if (routes.some(route => route.path.startsWith(subDomainRoutePrefix))) {
+            return routes.map((route) => {
+              if (route.path.startsWith(subDomainRoutePrefix)) {
+                return {
+                  ...route,
+                  path: route.path.replace(subDomainRoutePrefix, ""),
+                };
+              }
+              return route;
+            });
+          }
+          else {
+            return routes.map((route) => {
+              if (route.path.startsWith(tenantRoutePrefix)) {
+                return {
+                  ...route,
+                  path: route.path.replace(tenantRoutePrefix, ""),
+                };
+              }
+              return route;
+            });
+          }
         },
       };
       `,
