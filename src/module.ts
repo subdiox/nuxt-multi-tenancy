@@ -43,34 +43,27 @@ export default defineNuxtModule<ModuleOptions>({
           if (!rootDomain) {
             return routes;
           }
-          if (hostname === rootDomain) {
-            return routes;
-          }
-          const subDomain = hostname.replace(\`.\${rootDomain}\`, "");
+          const subDomain = hostname === rootDomain ? "@" : hostname.replace(\`.\${rootDomain}\`, "");
           const subDomainRoutePrefix = \`/\${subDomain}\`;
+          if (routes.some((route) => route.path.startsWith(subDomainRoutePrefix))) {
+            return routes
+              .filter((route) => route.path.startsWith(subDomainRoutePrefix))
+              .map((route) => {
+                return {
+                  ...route,
+                  path: route.path.replace(subDomainRoutePrefix, "")
+                };
+              });
+          }
           const tenantRoutePrefix = \`/:${tenantDynamicRoute}()\`;
-          if (routes.some(route => route.path.startsWith(subDomainRoutePrefix))) {
-            return routes.map((route) => {
-              if (route.path.startsWith(subDomainRoutePrefix)) {
-                return {
-                  ...route,
-                  path: route.path.replace(subDomainRoutePrefix, ""),
-                };
-              }
-              return route;
+          return routes
+            .filter((route) => route.path.startsWith(tenantRoutePrefix))
+            .map((route) => {
+              return {
+                ...route,
+                path: route.path.replace(tenantRoutePrefix, "")
+              };
             });
-          }
-          else {
-            return routes.map((route) => {
-              if (route.path.startsWith(tenantRoutePrefix)) {
-                return {
-                  ...route,
-                  path: route.path.replace(tenantRoutePrefix, ""),
-                };
-              }
-              return route;
-            });
-          }
         },
       };
       `,
