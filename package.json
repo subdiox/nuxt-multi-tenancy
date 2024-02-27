@@ -1,8 +1,8 @@
 {
-  "name": "nuxt-multi-tenancy",
-  "version": "1.0.2",
+  "name": "nuxt-multi-tenancy-plus",
+  "version": "1.0.0",
   "description": "Nuxt Multi-tenancy module",
-  "repository": "hieuhani/nuxt-multi-tenancy",
+  "repository": "subdiox/nuxt-multi-tenancy",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -36,7 +36,6 @@
   "dependencies": {
     "@nuxt/kit": "^3.6.2"
   },
-  "private": true,
   "devDependencies": {
     "@types/node": "^18",
     "@nuxt/devtools": "latest",
